@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\ChangeLookAtTarget.cs" />
      <Compile Include="Assets\Scripts\LookAtTarget.cs" />
      <Compile Include="Assets\Scripts\RotateAround.cs" />
+     <Compile Include="Assets\move.cs" />
      <Compile Include="Assets\rotate.cs" />
  <Reference Include="UnityEngine.Networking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
