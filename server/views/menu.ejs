@@ -1,0 +1,59 @@
+<!Doctype html>
+<html>
+<head>
+<script src="javascripts/gamecontroller.min.js"></script>
+<style>
+html, body, canvas {
+  margin: 0;
+  padding: 0;
+  border: 10;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+</style>
+</head>
+<body>
+<canvas></canvas>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+<script>
+/* globals GameController */
+(function() {
+
+  var socket = io('http://144.37.221.90:4567');
+
+  var canvas = document.getElementsByTagName('canvas')[0];
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener(resize);
+  resize();
+  GameController.init({
+    left: {
+      type: 'joystick',
+      position: {left: '50%', bottom: '50%'},
+      joystick: {
+        touchStart: function(){
+          console.log('touch starts');
+        },
+        touchEnd: function(){
+          console.log('touch ends');
+        },
+        touchMove: function(details){
+          console.log(details);
+          if(details.dx > 0) {
+            socket.emit("move", {x: 1, z: 0, y: 0});
+          }
+        }
+      }
+    },
+});
+})();
+</script>
+<script>
+
+</script>
+</body>
+</html>

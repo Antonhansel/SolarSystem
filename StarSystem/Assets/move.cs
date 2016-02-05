@@ -1,33 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SocketIO;
 
-[System.Serializable]
-public class Boundary
-{
-	public float xMin, xMax, zMin, zMax;
-}
 
-public class PlayerController : MonoBehaviour
-{
-	public float speed;
-	public float tilt;
-	public Boundary boundary;
+public class move : MonoBehaviour {
+	public float speed = 100.0F;
+	private Vector3 moveDirection = Vector3.zero;
+	private Vector3 nextDirection = Vector3.zero;
+	private bool socketInput = false;
+	private SocketIOComponent socket;
+	private CharacterController controller; 
 
-	void FixedUpdate ()
-	{
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
+	public void Start() {
+		controller = GetComponent<CharacterController>();
+		GameObject go = GameObject.Find("SocketIO");
+		socket = go.GetComponent<SocketIOComponent>();
 
-		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-		GetComponent<Rigidbody>().velocity = movement * speed;
+		// Defining the socket callback
+		socket.On("move", (SocketIOEvent e) => {
+			Debug.Log(e.data);
+			nextDirection = new Vector3(e.data["x"].f, 0, e.data["y"].f);
+			socketInput = true;
+		});
+	}
 
-		GetComponent<Rigidbody>().position = new Vector3 
-			(
-				Mathf.Clamp (GetComponent<Rigidbody>().position.x, boundary.xMin, boundary.xMax), 
-				0.0f, 
-				Mathf.Clamp (GetComponent<Rigidbody>().position.z, boundary.zMin, boundary.zMax)
-			);
-
-		GetComponent<Rigidbody>().rotation = Quaternion.Euler (0.0f, 0.0f, GetComponent<Rigidbody>().velocity.x * -tilt);
+	void Update() {
+		if (socketInput) {
+			Debug.Log (nextDirection);
+			moveDirection = nextDirection;
+			socketInput = false;
+		} else {
+			moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+		}
+		moveDirection = transform.TransformDirection(moveDirection);
+		moveDirection *= speed;
+		moveDirection.y -= Time.deltaTime;
+		controller.Move(moveDirection * Time.deltaTime);
 	}
 }

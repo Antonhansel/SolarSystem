@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">StarSystem</string>
+
+    <string name="app_title">Star System</string>
+    <string name="instructions">Enter the same code in unity</string>
+    <string name="access_code">****</string>
+    <string name="action_settings">Settings</string>
+</resources>
