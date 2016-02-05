@@ -2,26 +2,29 @@
 <html>
 <head>
 <script src="javascripts/gamecontroller.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="javascripts/gyro.js"></script>
 <style>
 html, body, canvas {
   margin: 0;
   padding: 0;
-  border: 10;
+  border: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background-color: rgb(0, 0, 0);
 }
 </style>
 </head>
 <body>
 <canvas></canvas>
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
 <script>
 /* globals GameController */
 (function() {
 
   var socket = io('http://144.37.221.90:4567');
+  var move = {x: 0, z: 0, y: 0};
 
   var canvas = document.getElementsByTagName('canvas')[0];
   function resize() {
@@ -30,26 +33,51 @@ html, body, canvas {
   }
   window.addEventListener(resize);
   resize();
+  gyro.frequency = 50;
+  gyro.startTracking(function(o) {
+    if(o.x < -1) {
+      move.x = 1;
+    }
+    else if(o.x > 1) {
+      move.x = -1;
+    }
+    else {
+      move.x = 0;
+    }
+    if(o.y < -1) {
+      move.z = -1;
+    }
+    else if(o.y > 1) {
+      move.z = 1;
+    }
+    else {
+      move.z = 0;
+    }
+    socket.emit("move", move);
+  });
   GameController.init({
-    left: {
-      type: 'joystick',
-      position: {left: '50%', bottom: '50%'},
-      joystick: {
-        touchStart: function(){
-          console.log('touch starts');
-        },
-        touchEnd: function(){
-          console.log('touch ends');
-        },
-        touchMove: function(details){
-          console.log(details);
-          if(details.dx > 0) {
-            socket.emit("move", {x: 1, z: 0, y: 0});
-          }
+    left: false,
+    right: {
+      position: {
+        top: '45%',
+        left: '45%'
+      },
+      type: 'buttons',
+      buttons: [{
+        backgroundColor: "white",
+        radius: 150,
+        label: 'BOOST', fontSize: 100,
+        touchStart: function() {
+          console.log("touchStart");
+          move.y = 1;
+          socket.emit("move", move);
+        }, touchEnd: function() {
+          move.y = 0;
+          socket.emit("move", move);
         }
-      }
-    },
-});
+      }, false, false, false]
+    }
+  });
 })();
 </script>
 <script>

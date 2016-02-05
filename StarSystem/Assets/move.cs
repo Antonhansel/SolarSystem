@@ -10,6 +10,7 @@ public class move : MonoBehaviour {
 	private bool socketInput = false;
 	private SocketIOComponent socket;
 	private CharacterController controller; 
+	private float nextRotation = 0F;
 
 	public void Start() {
 		controller = GetComponent<CharacterController>();
@@ -19,7 +20,8 @@ public class move : MonoBehaviour {
 		// Defining the socket callback
 		socket.On("move", (SocketIOEvent e) => {
 			Debug.Log(e.data);
-			nextDirection = new Vector3(e.data["x"].f, 0, e.data["y"].f);
+			nextDirection = new Vector3(e.data["x"].f, e.data["z"].f, 0);
+			nextRotation = e.data["y"].f * 20;
 			socketInput = true;
 		});
 	}
@@ -28,7 +30,7 @@ public class move : MonoBehaviour {
 		if (socketInput) {
 			Debug.Log (nextDirection);
 			moveDirection = nextDirection;
-			socketInput = false;
+//			socketInput = false;
 		} else {
 			moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 		}
@@ -36,5 +38,6 @@ public class move : MonoBehaviour {
 		moveDirection *= speed;
 		moveDirection.y -= Time.deltaTime;
 		controller.Move(moveDirection * Time.deltaTime);
+		transform.Rotate(0, nextRotation * Time.deltaTime, 0);
 	}
 }
