@@ -23,7 +23,7 @@ html, body, canvas {
 /* globals GameController */
 (function() {
 
-  var socket = io.connect("https://starsystem-cs.herokuapp.com");
+  var socket = io.connect();
   var move = {x: 0, z: 0, y: 0};
 
   var canvas = document.getElementsByTagName('canvas')[0];

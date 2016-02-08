@@ -27,9 +27,8 @@ app.get('/', function(req, res) {
 io.on('connection', function(socket) {
   console.log("New connection");
 
-  socket.on("connection", function() {
-    socket.emit("test", {status: "connection"});
-  });
+
+  socket.emit("test", {status: "connection"});
 
   socket.on("move", function(data) {
     console.log(data);
