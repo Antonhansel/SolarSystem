@@ -25,7 +25,9 @@ html, body, canvas {
 
   var socket = io.connect();
   var move = {x: 0, z: 0, y: 0};
-
+  socket.on("test", function() {
+    console.log("Test event received");
+  });
   var canvas = document.getElementsByTagName('canvas')[0];
   function resize() {
     canvas.width = window.innerWidth;
