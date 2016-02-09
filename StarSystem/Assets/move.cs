@@ -4,7 +4,7 @@ using SocketIO;
 
 
 public class move : MonoBehaviour {
-	public float speed = 100.0F;
+	public float speed = 500.0F;
 	private Vector3 moveDirection = Vector3.zero;
 	private Vector3 nextDirection = Vector3.zero;
 	private bool socketInput = false;
@@ -15,13 +15,16 @@ public class move : MonoBehaviour {
 	public void Start() {
 		controller = GetComponent<CharacterController>();
 		GameObject go = GameObject.Find("SocketIO");
-		socket = go.GetComponent<SocketIOComponent>();
 
+		socket = go.GetComponent<SocketIOComponent>();
 		// Defining the socket callback
+		socket.On ("test", (SocketIOEvent e) => {
+			Debug.Log("TEST EVENT RECIEVED");
+		});
 		socket.On("move", (SocketIOEvent e) => {
 			Debug.Log(e.data);
-			nextDirection = new Vector3(e.data["x"].f, e.data["z"].f, 0);
-			nextRotation = e.data["y"].f * 20;
+			nextDirection = new Vector3(0, e.data["z"].f, e.data["y"].f);
+			nextRotation = e.data["x"].f * 50;
 			socketInput = true;
 		});
 	}
@@ -30,7 +33,7 @@ public class move : MonoBehaviour {
 		if (socketInput) {
 			Debug.Log (nextDirection);
 			moveDirection = nextDirection;
-//			socketInput = false;
+			socketInput = false;
 		} else {
 			moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 		}
