@@ -15,7 +15,7 @@ public class move : MonoBehaviour {
 	public void Start() {
 		controller = GetComponent<CharacterController>();
 		GameObject go = GameObject.Find("SocketIO");
-
+		Debug.Log ("TEST TEST");
 		socket = go.GetComponent<SocketIOComponent>();
 		// Defining the socket callback
 		socket.On ("test", (SocketIOEvent e) => {

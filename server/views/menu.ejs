@@ -28,6 +28,9 @@ html, body, canvas {
   socket.on("test", function() {
     console.log("Test event received");
   });
+  socket.on("move", function() {
+    console.log('Move recieved');
+  });
   var canvas = document.getElementsByTagName('canvas')[0];
   function resize() {
     canvas.width = window.innerWidth;
